@@ -19,4 +19,6 @@ jobs:
     - name: Run a multi-line script
       run: |
         echo "Running on branch deletion, branch: ${BRANCH_NAME}"
-        echo "Create an s3 bucket ${BRANCH_NAME} here..."
+        aws --version
+        aws iam get-user
+        echo "Delete an s3 bucket ${BRANCH_NAME} here..."

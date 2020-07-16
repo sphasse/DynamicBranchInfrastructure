@@ -6,17 +6,44 @@ on:
     - '!documentation/**'
 
 jobs:
-  push:
+  confirm-prerequisites:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: nelonoel/branch-name@v1
+    - uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Confirm prerequisites are in place to deploy
+      run: |
+        echo "Checking prerequisties are in place to deploy branch: ${BRANCH_NAME}"
+        aws --version
+        aws iam get-user
+        ./.github/scripts/wait_for_param.sh ${BRANCH_NAME}
+        echo "Update the app for ${BRANCH_NAME} here..."
+
+  deploy:
     # The type of runner that the job will run on
+    needs: confirm-prerequisites
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
     - uses: nelonoel/branch-name@v1
+    - uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
 
-    - name: Run a multi-line script
+    - name: Deploy the application
       run: |
         echo "Running on branch push, branch: ${BRANCH_NAME}"
+        aws --version
+        aws iam get-user
         echo "Update the app for ${BRANCH_NAME} here..."
