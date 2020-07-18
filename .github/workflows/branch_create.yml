@@ -32,4 +32,4 @@ jobs:
         echo "Creating the S3 bucket to hold branch artifacts..."
         aws s3 mb s3://${BRANCH_NAME}.branchexample.flexion.us
         echo "Creating the parameter to specify infrastructure creation is complete for ${BRANCH_NAME}..."
-        aws ssm put-parameter --name "${BRANCH_NAME}" -value "provisioned" --type String
+        aws ssm put-parameter --name "${BRANCH_NAME}" --value "provisioned" --type String
