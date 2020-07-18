@@ -7,8 +7,6 @@ on:
 
 env:
   AWS_REGION: us-east-1
-  GH_REPO: {{ github.repository }}
-
 
 jobs:
   provision:
@@ -24,7 +22,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${env.AWS_REGION}
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Run a multi-line script
       run: |
@@ -32,7 +30,6 @@ jobs:
         aws --version
         aws iam get-user
         echo "Creating the S3 bucket to hold branch artifacts..."
-        aws s3 
+        aws s3 mb s3://${BRANCH_NAME}.branchexample.flexion.us
         echo "Creating the parameter to specify infrastructure creation is complete for ${BRANCH_NAME}..."
         aws ssm put-parameter --name "${BRANCH_NAME}" -value "provisioned" --type String
-        echo Create an s3 bucket ${BRANCH_NAME} here...

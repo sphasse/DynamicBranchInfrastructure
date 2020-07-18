@@ -5,6 +5,9 @@ on:
     branches:
     - '!documentation/**'
 
+env:
+  AWS_REGION: us-east-1
+
 jobs:
   delete:
     # The type of runner that the job will run on
@@ -19,11 +22,14 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ${{ env.AWS_REGION }}
 
-    - name: Run a multi-line script
+    - name: remove bucket
       run: |
         echo "Running on branch deletion, branch: ${BRANCH_NAME}"
         aws --version
         aws iam get-user
         echo "Delete an s3 bucket ${BRANCH_NAME} here..."
+        ./.github/scripts/remove-bucket.sh ${BRANCH_NAME}.branchexample.flexion.us ${AWS_REGION}
+        echo "Removing the paramenter that indicates the infrastructure is deployed..."
+        aws ssm delete-parameter --name "${BRANCH_NAME}"

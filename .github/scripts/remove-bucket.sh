@@ -1,5 +1,5 @@
 #!/bin/bash
-# removes an S3 bucket holding Terraform state, including all versions.  Cannot be undone.
+# removes an S3 bucket including all versions.  Cannot be undone.
 
 BUCKET=$1
 if [ -z "${BUCKET}" ]
@@ -16,7 +16,7 @@ then
 fi
 
 
-echo "Initiating Terraform state bucket removal for bucket [${BUCKET}] in region [${REGION}]"
+echo "Initiating bucket removal for bucket [${BUCKET}] in region [${REGION}]"
 
 aws s3api put-bucket-versioning --bucket ${BUCKET} --versioning-configuration Status=Suspended
 # remove all versions
