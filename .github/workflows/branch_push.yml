@@ -6,6 +6,10 @@ on:
     - '!documentation/**'
     - '*'
 
+env:
+  AWS_REGION: us-east-1
+  S3_BUCKET: ${{ secrets.SuperSecret }}
+
 jobs:
   confirm-prerequisites:
     runs-on: ubuntu-latest
@@ -17,7 +21,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ${AWS_REGION}
 
     - name: Confirm prerequisites are in place to deploy
       run: |
@@ -48,3 +52,4 @@ jobs:
         aws --version
         aws iam get-user
         echo "Update the app for ${BRANCH_NAME} here..."
+        aws s3 cp app/index.html s3://${BRANCH_NAME}.branchexample.flexion.us/index.html

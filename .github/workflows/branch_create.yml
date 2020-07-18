@@ -5,6 +5,11 @@ on:
     branches:
     - '!documentation/**'
 
+env:
+  AWS_REGION: us-east-1
+  GH_REPO: {{ github.repository }}
+
+
 jobs:
   provision:
     # The type of runner that the job will run on
@@ -19,13 +24,15 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ${env.AWS_REGION}
 
     - name: Run a multi-line script
       run: |
         echo "Running on branch creation, branch: ${BRANCH_NAME}"
         aws --version
         aws iam get-user
-        echo "Creating the parameter to specify infrastructure creation is complete for ${BRANCH_NAME}"
+        echo "Creating the S3 bucket to hold branch artifacts..."
+        aws s3 
+        echo "Creating the parameter to specify infrastructure creation is complete for ${BRANCH_NAME}..."
         aws ssm put-parameter --name "${BRANCH_NAME}" -value "provisioned" --type String
         echo Create an s3 bucket ${BRANCH_NAME} here...
