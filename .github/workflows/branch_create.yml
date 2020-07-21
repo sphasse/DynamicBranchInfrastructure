@@ -27,6 +27,7 @@ jobs:
     - name: Run a multi-line script
       run: |
         echo "Running on branch creation, branch: ${BRANCH_NAME}"
+        run: echo "Event ref and ref_type: ${{ github.event.ref }} - ${{ github.event.ref_type }}"
         aws --version
         aws iam get-user
         echo "Creating the S3 bucket to hold branch artifacts..."
