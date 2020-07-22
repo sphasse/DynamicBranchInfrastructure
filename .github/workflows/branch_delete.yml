@@ -26,11 +26,11 @@ jobs:
 
     - name: remove bucket
       run: |
-        echo "Running on branch deletion, branch: ${BRANCH_NAME}"
+        echo "Running on branch deletion, branch: ${env.BRANCH_NAME}"
         echo "Event ref and ref_type: ${{ github.event.ref }} - ${{ github.event.ref_type }}"
         aws --version
         aws iam get-user
-        echo "Delete an s3 bucket ${BRANCH_NAME} here..."
-        ./.github/scripts/remove-bucket.sh ${BRANCH_NAME}.branchexample.flexion.us ${AWS_REGION}
+        echo "Delete an s3 bucket ${env.BRANCH_NAME} here..."
+        ./.github/scripts/remove-bucket.sh ${env.BRANCH_NAME}.branchexample.flexion.us ${AWS_REGION}
         echo "Removing the paramenter that indicates the infrastructure is deployed..."
-        aws ssm delete-parameter --name "${BRANCH_NAME}"
+        aws ssm delete-parameter --name "${env.BRANCH_NAME}"
