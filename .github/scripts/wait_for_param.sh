@@ -21,7 +21,7 @@ while [[ ${RETRIES} -ne 0 ]]; do
         exit 0
     fi
 
-    echo "${EXPECTED_STATE} state not reached.  Sleeping.  $((RETRIES-1)) retries left."
+    echo "${EXPECTED_STATE} state not reached for param ${PARAM_NAME}.  Sleeping.  $((RETRIES-1)) retries left."
     sleep ${DELAY}
     RETRIES=$((RETRIES-1))
 done
