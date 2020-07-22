@@ -25,5 +25,5 @@ while [[ ${RETRIES} -ne 0 ]]; do
     sleep ${DELAY}
     RETRIES=$((RETRIES-1))
 done
-echo "${EXPECTED_STATE} state not reached after waiting for $((RETRIES*DURATION)) seconds, terminating with an error."
+echo "${EXPECTED_STATE} state not reached for param ${PARAM_NAME} after waiting for $((RETRIES*DURATION)) seconds, terminating with an error."
 exit 1
