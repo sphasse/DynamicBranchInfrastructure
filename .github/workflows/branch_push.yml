@@ -50,5 +50,6 @@ jobs:
         echo "Running on branch push, branch: ${BRANCH_NAME}"
         aws --version
         aws iam get-user
+        echo "Event ref and ref_type: ${{ github.event.ref }} - ${{ github.event.ref_type }}"
         echo "Update the app for ${BRANCH_NAME} here..."
         aws s3 cp app/index.html s3://${BRANCH_NAME}.branchexample.flexion.us/index.html
