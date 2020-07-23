@@ -20,11 +20,9 @@ if args.region is None:
     print("You must provide an AWS region")
     sys.exit(1)
 
-print(args.table)
-
-# get a reference to the DynamoDB resource
 dynamodb_resource = boto3.resource('dynamodb', region_name=args.region)
 lock_client = DynamoDBLockClient(dynamodb_resource, table_name=args.table)
 lock = lock_client.acquire_lock(args.lock)
+print("Lock obtained successfully:")
 print(lock)
 lock_client.close()
