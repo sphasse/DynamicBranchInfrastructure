@@ -34,7 +34,12 @@ jobs:
         echo "Update the app for ${BRANCH_NAME} here..."
         python -m pip install --upgrade pip
         if [ -f .github/requirements.txt ]; then pip install -r .github/requirements.txt; fi
-        echo ".github/scripts/obtain-lock.py --table LockTest3 --lock ${BRANCH_NAME} --region ${AWS_REGION}"
+
+    - name: Obtain the deploy lock
+      if: ${{ success() }}
+      run: |
+        echo "Obtain the branch-specific deploy lock"
+        .github/scripts/obtain-lock.py --table LockTest3 --lock "${BRANCH_NAME}" --region ${AWS_REGION}
 
     - name: Deploy the application
       if: ${{ success() }}
@@ -50,4 +55,4 @@ jobs:
       if: ${{ always() }}
       run: |
         echo "Releasing the deploy lock"
-        echo ".github/scripts/release-lock.py --table LockTest3 --lock ${BRANCH_NAME} --region ${AWS_REGION}"
+        .github/scripts/release-lock.py --table LockTest3 --lock "${BRANCH_NAME}" --region ${AWS_REGION}
