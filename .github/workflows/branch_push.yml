@@ -10,7 +10,7 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
-  confirm-prerequisites:
+  handle-branch-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,8 @@ jobs:
 
     - name: Confirm prerequisites are in place to deploy
       run: |
-        echo "Checking prerequisties are in place to deploy branch: ${BRANCH_NAME}"
+        echo "Confirm prerequisites are in place"
+        echo "Branch: ${BRANCH_NAME}"
         python -c "import sys; print(sys.version)"
         aws --version
         aws iam get-user
@@ -33,11 +34,12 @@ jobs:
         echo "Update the app for ${BRANCH_NAME} here..."
         python -m pip install --upgrade pip
         if [ -f .github/requirements.txt ]; then pip install -r .github/requirements.txt; fi
+        echo ".github/scripts/obtain-lock.py --table LockTest3 --lock ${BRANCH_NAME} --region ${AWS_REGION}"
 
     - name: Deploy the application
       if: ${{ success() }}
       run: |
-        echo "Running on branch push, branch: ${BRANCH_NAME}"
+        echo "Deploy the application"
         aws --version
         aws iam get-user
         echo "Event ref and ref_type: ${{ github.event.ref }} - ${{ github.event.ref_type }}"
@@ -47,4 +49,5 @@ jobs:
     - name: Release the deploy lock
       if: ${{ always() }}
       run: |
-        echo "Running on branch push, branch: ${BRANCH_NAME}"
+        echo "Releasing the deploy lock"
+        echo ".github/scripts/release-lock.py --table LockTest3 --lock ${BRANCH_NAME} --region ${AWS_REGION}"
