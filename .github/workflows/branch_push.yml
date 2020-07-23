@@ -27,12 +27,12 @@ jobs:
       run: |
         echo "Confirm prerequisites are in place"
         echo "Branch: ${BRANCH_NAME}"
-        python -c "import sys; print(sys.version)"
+        python3 -c "import sys; print(sys.version)"
         aws --version
         aws iam get-user
         ./.github/scripts/wait-for-param.sh ${BRANCH_NAME}
         echo "Update the app for ${BRANCH_NAME} here..."
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         if [ -f .github/requirements.txt ]; then pip install -r .github/requirements.txt; fi
 
     - name: Obtain the deploy lock
