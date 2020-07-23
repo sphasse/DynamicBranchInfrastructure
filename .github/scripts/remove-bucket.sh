@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # removes an S3 bucket including all versions.  Cannot be undone.
 
 BUCKET=$1
