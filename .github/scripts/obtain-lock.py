@@ -4,6 +4,13 @@ import argparse
 import sys
 from python_dynamodb_lock.python_dynamodb_lock import *
 import boto3
+import logging
+
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--table", help="The name of the DynamoDB lock table")
