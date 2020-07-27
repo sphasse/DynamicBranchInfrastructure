@@ -7,6 +7,8 @@ on:
 
 env:
   AWS_REGION: us-east-1
+  # The branch name for the delete operation from the nelonoel/branch-name plugin is master for a branch delete
+  # So we use the ref instead which is the deleted branch name.
   BRANCH_NAME: ${{ github.event.ref }}
 
 jobs:
