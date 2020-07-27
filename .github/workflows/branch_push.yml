@@ -10,7 +10,7 @@ env:
   AWS_REGION: us-east-1
 
 jobs:
-  confirm-prerequisites:
+  handle-branch-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,35 +21,40 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.x' 
 
     - name: Confirm prerequisites are in place to deploy
       run: |
-        echo "Checking prerequisties are in place to deploy branch: ${BRANCH_NAME}"
+        echo "Confirm prerequisites are in place"
+        echo "Branch: ${BRANCH_NAME}"
+        python3 -c "import sys; print(sys.version)"
         aws --version
         aws iam get-user
-        ./.github/scripts/wait_for_param.sh ${BRANCH_NAME}
+        ./.github/scripts/wait-for-param.sh ${BRANCH_NAME}
         echo "Update the app for ${BRANCH_NAME} here..."
+        python3 -m pip install --upgrade pip
+        if [ -f .github/requirements.txt ]; then pip install -r .github/requirements.txt; fi
 
-  deploy:
-    # The type of runner that the job will run on
-    needs: confirm-prerequisites
-    runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-    - uses: actions/checkout@v2
-    - uses: nelonoel/branch-name@v1
-    - uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+    - name: Obtain the deploy lock
+      if: ${{ success() }}
+      run: |
+        echo "Obtain the branch-specific deploy lock"
+        .github/scripts/obtain-lock.py --table LockTest3 --lock "${BRANCH_NAME}" --region ${AWS_REGION}
 
     - name: Deploy the application
+      if: ${{ success() }}
       run: |
-        echo "Running on branch push, branch: ${BRANCH_NAME}"
+        echo "Deploy the application"
         aws --version
         aws iam get-user
         echo "Event ref and ref_type: ${{ github.event.ref }} - ${{ github.event.ref_type }}"
         echo "Update the app for ${BRANCH_NAME} here..."
         aws s3 cp app/index.html s3://${BRANCH_NAME}.branchexample.flexion.us/index.html
+
+    - name: Release the deploy lock
+      if: ${{ always() }}
+      run: |
+        echo "Releasing the deploy lock"
+        .github/scripts/release-lock.py --table LockTest3 --lock "${BRANCH_NAME}" --region ${AWS_REGION}
